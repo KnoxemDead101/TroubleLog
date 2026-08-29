@@ -4,35 +4,36 @@
 # ==========================================================
 #
 # WHAT THIS FILE IS FOR:
-# A quick, runnable sanity check for the model files in src/models/.
+# A quick, runnable sanity check for the model files in src/
+# (log_entry.py, homelab_log.py, job_log.py).
 # Not a "real" automated test suite (that would use a tool like pytest)
 # — just a plain script you can run directly to confirm the models
 # import correctly and behave as expected on YOUR desktop's Python
 # install, before building anything else on top of them.
 #
 # HOW TO RUN THIS:
-#   From the project's ROOT folder (the one containing main.py), run:
+#   This file lives in src/, alongside main.py, homelab_log.py, etc.
+#   From inside the src/ folder, run:
 #       python3 check_models.py
-#   (Must be run from the root, not from inside src/models/, so the
-#   relative imports inside homelab_log.py / job_log.py resolve correctly.)
 #
 # WHAT SUCCESS LOOKS LIKE:
 #   You'll see two log summaries printed, each ending in "OK" — no
 #   error/traceback text (typically red, or ending in "Error: ...").
 #
 # WHAT A FAILURE LOOKS LIKE, AND WHAT IT PROBABLY MEANS:
-#   - "ModuleNotFoundError: No module named 'src'"
-#       -> You're not running this from the project root folder.
-#   - "ImportError: attempted relative import with no known parent package"
-#       -> src/__init__.py or src/models/__init__.py is missing.
+#   - "ModuleNotFoundError: No module named 'homelab_log'" (or similar)
+#       -> You're not running this from inside the src/ folder, or one
+#          of homelab_log.py/job_log.py/log_entry.py is missing from it.
 #   - "ValueError: HomelabLog is missing required field(s): ..."
 #       -> A required field wasn't filled in below — this one is
 #          EXPECTED to happen in the "should fail" section further down,
 #          proving the validation actually works.
 
-from src.models.homelab_log import HomelabLog, OperatingSystem, DeviceType
-from src.models.job_log import JobLog, JobCategory
-from src.models.log_entry import LogStatus
+from homelab_log import HomelabLog, OperatingSystem, DeviceType
+from job_log import JobLog, JobCategory
+from log_entry import LogStatus
+# Plain imports, matching the flat src/ layout — see the same note in
+# homelab_log.py / job_log.py.
 
 
 def check_homelab_log() -> None:

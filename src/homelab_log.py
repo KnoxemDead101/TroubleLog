@@ -17,15 +17,14 @@ from dataclasses import dataclass, field
 from enum import Enum
 from typing import ClassVar, List, Optional
 
-from .log_entry import LogEntry, LogType
-# The leading dot means "import from log_entry.py in this SAME folder."
-# This only works because src/models/ has an __init__.py file in it
-# (even though that file is empty) — that's what makes Python treat this
-# folder as an importable "package" rather than just a folder of loose
-# scripts. IF THIS IMPORT FAILS ON YOUR DESKTOP: check that
-# src/models/__init__.py and src/__init__.py both exist, and that you're
-# running the program from the project's root folder (not from inside
-# src/models/ itself).
+from log_entry import LogEntry, LogType
+# NEW CONCEPT: plain (non-relative) import
+# Since log_entry.py sits in this SAME folder (src/), and you're running
+# scripts directly out of src/ (not through a src.models package), a
+# plain import like this works correctly — Python finds log_entry.py
+# because it's sitting right next to this file. IF THIS IMPORT FAILS:
+# make sure you're running the program with log_entry.py present in the
+# same folder as this file.
 
 
 class OperatingSystem(str, Enum):

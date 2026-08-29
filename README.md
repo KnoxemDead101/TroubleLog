@@ -33,8 +33,15 @@ The primary goal of TroubleLog is to maintain a searchable history of system cha
   program-start value)
 * Escape hatch on the Read menu (blank input returns to main menu)
 * Basic blank-field validation on Create/Update
-* `HomelabLog` / `JobLog` data models with shared core fields, built and
-  tested, not yet wired into the running app (see Planned Features, v0.3)
+* `HomelabLog` / `JobLog` data models with shared core fields
+* Job log creation, reading, and updating — fully wired into the running
+  app (client/employer, category, time spent, fix, recommendation, tags)
+* Homelab and Job logs share the same folder-per-name convention
+  (`logs/<name>/`) and can be read/updated interchangeably
+* Enum-based picker for Status and Category on Job logs (numbered
+  selection instead of free text, closing off typos)
+* Required-field validation on Job log creation (`ValueError` raised and
+  caught if log number, title, summary, or client/employer is blank)
 
 ---
 
@@ -48,12 +55,12 @@ TroubleLog/
 │   └── macbook/
 │
 ├── src/
-│   ├── main.py           # CLI entry point / menu loop
+│   ├── main.py           # CLI entry point / menu loop (Homelab + Job)
 │   ├── menu.py            # menu display + choice validation
 │   ├── log_entry.py        # shared LogEntry base class + LogType/LogStatus enums
 │   ├── homelab_log.py      # HomelabLog model (on-site tech tickets)
 │   ├── job_log.py          # JobLog model (client/employer work)
-│   └── check_models.py     # runnable sanity check for the three files above
+│   └── check_models.py     # runnable sanity check for the model files above
 │
 ├── README.md
 ├── CHANGELOG.md
@@ -65,9 +72,11 @@ TroubleLog/
 
 ## Service Log Format
 
-Each service log is stored as a Markdown document.
+Each service log is stored as a Markdown document. TroubleLog supports
+two log types, sharing the same folder-per-name convention
+(`logs/<name>/`).
 
-Example:
+**Homelab log** (keyed on machine name):
 
 ```markdown
 # Service Log 001
@@ -89,11 +98,49 @@ Resolved
 Installed and configured OpenSSH Server for remote administration.
 ```
 
+**Job log** (keyed on client/employer name):
+
+```markdown
+# Job Log 001
+
+## Client / Employer
+
+Highway85
+
+## Category
+
+Audio/Visual
+
+## Title
+
+A/V Equipment Setup — Mixer, Speakers, Wireless Mic System
+
+## Status
+
+Resolved
+
+## Time Spent
+
+2 hours
+
+## Summary
+
+Set up mixer and speakers for event.
+
+## Fix
+
+Configured full signal chain and tested.
+
+## Tags
+
+av, mixer, xlr
+```
+
 ---
 
 ## Current Version
 
-**v0.3-planning-2**
+**v0.3**
 
 Current functionality includes:
 
@@ -102,8 +149,10 @@ Current functionality includes:
 * Update Service Log
 * Multi-machine support
 * Correct per-entry timestamps and basic input validation (v0.2 patches)
-* `HomelabLog` and `JobLog` data models, tested and working via
-  `check_models.py`, not yet connected to the running app
+* `HomelabLog` and `JobLog` data models, tested via `check_models.py`
+* Job logs fully wired into `main.py` — create, read, and update all
+  working against real data (Homelab logs share the same Read/Update
+  paths; Homelab Create remains on its original simple format for now)
 
 See `CHANGELOG.md` for the full version-by-version history and
 `decisions.md` for the reasoning behind each design choice.
@@ -114,11 +163,14 @@ See `CHANGELOG.md` for the full version-by-version history and
 
 ### v0.3 (in progress)
 
-* Log type selector (Homelab vs. Job) on log creation
-* Job log format wired into storage: client/employer, category, time
-  spent, fix, recommendation, tags
+* ~~Log type selector (Homelab vs. Job) on log creation~~ — done
+* ~~Job log format wired into storage: client/employer, category, time
+  spent, fix, recommendation, tags~~ — done
+* Upgrade Homelab Create flow to the same model + validation + enum-picker
+  pattern used by Job logs (deliberately deferred to protect existing
+  real logs — see `decisions.md`)
 * Attachment folder convention adopted in storage layer
-  (`logs/<type>/<name>/attachments/`, referenced via relative Markdown
+  (`logs/<name>/attachments/`, referenced via relative Markdown
   image links)
 * Delete service logs
 * Search logs

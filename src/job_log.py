@@ -14,7 +14,9 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import ClassVar, List, Optional
 
-from .log_entry import LogEntry, LogType
+from log_entry import LogEntry, LogType
+# Plain import, not relative — log_entry.py sits in this same folder
+# (src/). See the matching note in homelab_log.py for why.
 
 
 class JobCategory(str, Enum):

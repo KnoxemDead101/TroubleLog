@@ -4,7 +4,8 @@
 # ==========================================================
 #
 # WHAT THIS FILE IS FOR:
-# A quick, runnable sanity check for the model files in src/models/.
+# A quick, runnable sanity check for the model files in src/
+# (log_entry.py, homelab_log.py, job_log.py).
 # Not a "real" automated test suite (that would use a tool like pytest)
 # — just a plain script you can run directly to confirm the models
 # import correctly and behave as expected on YOUR desktop's Python

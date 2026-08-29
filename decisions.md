@@ -85,7 +85,7 @@ tracked rename, depending on how you stage it. Either is fine
 functionally — just don't be alarmed seeing a deletion in the diff.
 
 ### Decision: `Recommendation` field is Job-only for now
-Per Open Question #5 in `docs/roadmap.md`, Homelab logs do not get a
+Per Open Question #5 in `decisions.md` (Roadmap & Open Questions section), Homelab logs do not get a
 `Recommendation` field yet, even though it might seem generically useful.
 Left as Job-only until there's a real Homelab-side example (like the
 Highway85 Wi-Fi case) confirming it's actually needed there too, rather
@@ -94,7 +94,7 @@ than adding it speculatively.
 ### Not yet done
 - `HomelabLog`/`JobLog` are still schema-only — not wired into `main.py`,
   no storage logic, no log-type selector in the menu. This is the
-  v0.3 roadmap item (see `docs/roadmap.md`).
+  v0.3 roadmap item (see `decisions.md` (Roadmap & Open Questions section)).
 - `LogStatus` values are a working draft, not confirmed final (Open
   Question #6).
 - Attachments convention is documented but has no code behind it yet.
@@ -198,3 +198,54 @@ exact log number defeats its own purpose.
   `"01"` currently create separate files).
 - Storage is flat markdown files per log. SQLite vs. file-based storage
   decision is still open — flagged in brainstorm, not yet decided.
+
+---
+
+## Roadmap & Open Questions
+
+*(Merged in here since this project keeps a single root-level `decisions.md`
+rather than a separate `docs/` folder — this section was originally
+drafted as a standalone `roadmap.md` and is consolidated here to match
+the actual project layout.)*
+
+### Log Types
+TroubleLog supports two log types sharing one core (`log_entry.py`):
+- **Homelab log** (`homelab_log.py`) — on-site tech tickets, e.g. the JJ
+  laptop-fan example. Keyed on `machine`.
+- **Job log** (`job_log.py`) — client/employer work, e.g. the Highway85
+  A/V and Wi-Fi jobs. Keyed on `client_employer`.
+
+Shared fields (in `LogEntry`): log_number, title, status, summary, tags,
+date_reported, date_resolved.
+
+### Job Log Format
+New fields on top of the shared core: Client/Employer (replaces
+"Machine"), Category, Time Spent, Fix (isolated from Summary),
+Recommendation (optional — for jobs resolved on the core issue but with
+pending follow-up outside the fix's scope), Tags (inherited from the
+shared core).
+
+### Status Field
+Decision: `Status` describes the primary issue only. Pending follow-up
+work lives in `Recommendation`, not in a compound status value.
+
+### Attachments Convention
+Markdown can't hold files directly. Convention: store in a sibling
+`attachments/` folder per client (e.g.
+`logs/jobs/highway85/attachments/job-002-wifi-speedtest.png`), reference
+via relative Markdown image links, filenames tied to job log number.
+Not yet implemented in code.
+
+### Roadmap
+**v0.3:** log type selector on creation, job log format wired into
+storage, attachment folder convention adopted.
+**v0.4:** search/filter by tag/category/client, basic report generation.
+**v1.0:** unified library search across both log types.
+
+### Open Questions (unresolved)
+1. Should client/employer names be anonymized/abbreviated for confidentiality (NDA jobs)?
+2. Time tracking: plain text for now, or eventually structured for reports?
+3. Tags: free-text or a controlled list?
+4. Attachments: manual save, or should the app prompt/remind?
+5. Should Homelab logs also get a Category field eventually?
+6. Full list of valid Status values needs to be confirmed.

@@ -1,5 +1,25 @@
 # TroubleLog — Changelog
 
+## v0.3-planning-3 — 2026-08-29
+### Fixed (path mismatch)
+- Earlier entries below (v0.2-patch2 onward) describe model files under
+  `src/models/`. That path never matched this project's actual layout —
+  everything lives flat under `src/` (`src/log_entry.py`,
+  `src/homelab_log.py`, `src/job_log.py`, `src/check_models.py`). Read
+  every `src/models/...` reference below as `src/...` instead. Caused two
+  real import errors, both now fixed:
+  - `homelab_log.py` / `job_log.py` used `from .log_entry import ...`
+    (a relative import assuming a `models` package). Changed to
+    `from log_entry import ...` to match the flat layout.
+  - `check_models.py` used `from src.models.homelab_log import ...`.
+    Changed to `from homelab_log import ...` and confirmed it now runs
+    correctly from inside `src/`.
+- Corrected stale `docs/roadmap.md` / `docs/decisions.md` references
+  throughout this file and `decisions.md` — this project has no `docs/`
+  folder; roadmap content now lives in `decisions.md` directly.
+- Updated `README.md`: version number, project structure diagram, and
+  planned-features list were all out of sync with actual project state.
+
 ## v0.3-planning-2 — 2026-08-28
 ### Fixed (compatibility)
 - Replaced `@dataclass(kw_only=True)` (Python 3.10+ only) with a
@@ -30,7 +50,7 @@
 - `src/models/job_log.py`: new `JobLog` class for client/employer work —
   client_employer, category (new `JobCategory` enum), time_spent, fix,
   recommendation (optional).
-- `docs/roadmap.md`: new file capturing the job log format, status field
+- `decisions.md` (Roadmap & Open Questions section): new file capturing the job log format, status field
   decision, attachments convention, versioned roadmap (v0.3/v0.4/v1.0),
   and the full list of currently open/unresolved questions.
 - `src/__init__.py`, `src/models/__init__.py`: empty package markers,
@@ -38,13 +58,13 @@
 
 ### Changed
 - `src/models/service_log.py` removed; superseded by
-  `src/models/homelab_log.py`. See `docs/decisions.md` for git-diff note.
+  `src/models/homelab_log.py`. See `decisions.md` for git-diff note.
 
 ### Still schema-only (not yet wired to app)
 - No log-type selector in `main.py` yet.
 - No storage logic for either log type yet.
 - `LogStatus` values are a working draft (see Open Question #6 in
-  `docs/roadmap.md`).
+  `decisions.md` (Roadmap & Open Questions section)).
 
 ## v0.2-patch2 — 2026-08-28
 ### Changed
@@ -83,7 +103,7 @@
 ### Reviewed, unchanged
 - `menu.py` — no issues found.
 
-### Known gaps (carried forward, see `docs/decisions.md`)
+### Known gaps (carried forward, see `decisions.md`)
 - Schema does not yet include requested_by, OS, device type, symptoms,
   diagnosis, root cause, fix applied, tools used, or tags.
 - No cross-log listing/search.

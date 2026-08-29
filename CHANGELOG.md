@@ -1,5 +1,46 @@
 # TroubleLog — Changelog
 
+## v0.3 — 2026-08-29
+### Added
+- Job logs are now wired into the actual running app, not just
+  schema-only. Choice "1" (Create) now asks for a log type
+  (Homelab/Job) up front. Selecting Job:
+  - Builds a real, validated `JobLog` object (log_entry.py's
+    required-field check now actually runs in the live app for the
+    first time — missing log_number/title/summary/client_employer is
+    caught and reported, not silently written).
+  - Uses the SAME folder-per-name convention as Homelab logs
+    (`logs/<client_employer>/`), confirmed as the intended shared design
+    — a client/employer folder like `highway85/` sits alongside machine
+    folders like `friday/` in the same top-level `logs/` directory.
+  - Prompts for Status and Category using a new `choose_enum()` helper —
+    a numbered picker that only accepts a value from the actual Enum, so
+    typos in these fields are no longer possible for Job logs.
+  - Writes output matching the Job Log markdown format from
+    `decisions.md`'s Roadmap section, including a `Recommendation`
+    section that's only included in the file when one was actually
+    provided.
+- `resolve_log_file()` helper added so Read (choice "2") and Update
+  (choice "3") work correctly regardless of whether a given folder
+  contains a Homelab log (`service-log-N.md`) or a Job log
+  (`job-log-N.md`) — the person reading/updating a log no longer needs
+  to remember which type it was.
+
+### Verified
+- Ran a full Create → Read → Update cycle on a real Job log
+  (`highway85/job-log-001.md`) end to end before handoff — output
+  confirmed correct at every step.
+- Confirmed the ORIGINAL Homelab Create flow is byte-for-byte unchanged
+  — ran it directly, output format matches pre-v0.3 exactly. No risk to
+  existing real logs (e.g. `friday`).
+
+### Not changed (by design, this pass)
+- Homelab CREATE still uses its original 4-field flow (machine, title,
+  status, summary) and free-text status — NOT yet upgraded to use the
+  full `HomelabLog` model or `choose_enum()`. Left alone deliberately to
+  avoid any risk to already-existing real Homelab logs. Revisit as a
+  separate, deliberate step later (see decisions.md).
+
 ## v0.3-planning-3 — 2026-08-29
 ### Fixed (path mismatch)
 - Earlier entries below (v0.2-patch2 onward) describe model files under

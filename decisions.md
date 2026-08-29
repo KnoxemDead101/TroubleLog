@@ -5,6 +5,49 @@ Paired with `CHANGELOG.md`, which tracks *what* changed and *when*.
 
 ---
 
+## 2026-08-29 — Job logs wired into main.py
+
+### Decision: folder keyed on name, not on log type
+Confirmed directly: the logs/ folder structure is keyed on WHO/WHAT the
+log is about (machine name for Homelab, client/employer name for Job),
+not on log type. A Job log for Highway85 lives in logs/highway85/,
+sitting alongside logs/friday/ (Homelab) at the same directory level —
+one shared convention, not a split structure. This directly resolves
+the ambiguity that existed between this and the earlier-drafted
+Attachments Convention note (which had sketched a logs/jobs/<client>/
+path) — logs/<name>/ is the actual, confirmed convention going forward;
+the attachments sub-path should be read as logs/<name>/attachments/ to
+match.
+
+### Decision: Homelab CREATE flow left untouched in this pass
+Only the Job log path was wired to use the full model + validation +
+choose_enum() pattern. Homelab CREATE still uses its original simple
+4-field flow.
+
+Why: friday and other machines already have real logs written in the
+original simple format. Changing the Homelab CREATE flow in the same
+pass as introducing Job logs would mean touching two risky things at
+once. Job logs had no existing real app-generated data to protect, so
+they were the safer place to prove out the model+validation+enum
+pattern first. Upgrading Homelab CREATE to the same pattern is a
+reasonable next step, but deliberately deferred to its own pass.
+
+### Decision: enums enforced via a picker, not just declared
+Declaring OperatingSystem/DeviceType/JobCategory/LogStatus as Enums
+(done in an earlier pass) only prevents typos if the CODE asking for
+input actually restricts choices to those values. Added choose_enum()
+in main.py as the actual enforcement point for Job logs — a numbered
+list the user picks from, rather than free text matched against the
+enum after the fact. This is the first real, running instance of the
+"stronger input verification" goal from the original brainstorm being
+enforced in the live app, not just designed on paper.
+
+### Verified before handoff
+Ran a full Create -> Read -> Update cycle on a real Job log through the
+actual main.py, and separately re-ran the original Homelab Create flow
+to confirm its output is unchanged. Both confirmed working.
+
+---
 ## 2026-08-28 — Compatibility fix: dropped kw_only for portability
 
 ### Problem
